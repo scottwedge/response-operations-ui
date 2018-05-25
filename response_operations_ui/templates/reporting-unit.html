@@ -159,7 +159,7 @@
                   </dd>
                   <div>
                     <form action="{{ url_for('reporting_unit_bp.view_contact_details', respondent_id=respondent.id, ru_ref=ru.sampleUnitRef)}}" method="get">
-                      <a href=# id="edit-contact-details-btn-{{ survey.shortName }}" onclick="this.parentNode.submit()"> Edit contact details </a>
+                      <a href=# id="edit-contact-details-btn-{{ survey.shortName }}" class="edit-contact-details-btn"> Edit contact details </a>
                     </form>
                   </div>
                 </dl>
@@ -217,6 +217,7 @@
   {% endfor %}
   <script nonce="{{ csp_nonce() }}">
     initDataPanels();
+    editContactDetails();
     openPanel();
   </script>
 </section>
