@@ -86,10 +86,20 @@
       {{ form.submit(class_="btn btn--primary u-mt-s") }}
 
       <div>
-        <a href="#" onclick="history.back(); return false;">Cancel</a>
+        <a href="#" class="update-event-date">Cancel</a>
       </div>
     </form>
 
   </div>
 </div>
+<script nonce="{{ csp_nonce() }}">
+    function updateEventDateOnClick() {
+        var element = document.getElementsByClassName("update-event-date");
+        element.addEventListener("click", function () {
+          history.back(); return false;
+        });
+      }
+
+    updateEventDateOnClick()
+</script>
 {% endblock main %}}
