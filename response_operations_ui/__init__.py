@@ -5,11 +5,11 @@ from flask import Flask
 from flask_assets import Bundle, Environment
 from flask_login import LoginManager
 from flask_session import Session
+from flask_talisman import Talisman
 import redis
 
 from response_operations_ui.cloud.cloudfoundry import ONSCloudFoundry
 from response_operations_ui.logger_config import logger_initial_config
-from response_operations_ui.talisman import Talisman
 from response_operations_ui.user import User
 
 
