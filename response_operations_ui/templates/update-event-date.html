@@ -93,13 +93,13 @@
   </div>
 </div>
 <script nonce="{{ csp_nonce() }}">
-    function updateEventDateOnClick() {
-        var element = document.getElementsByClassName("update-event-date");
-        element.addEventListener("click", function () {
-          history.back(); return false;
-        });
-      }
+  function updateEventDateOnClick() {
+      var element = document.getElementsByClassName("update-event-date");
+      element.addEventListener("click", function () {
+        history.back(); return false;
+      });
+    }
 
-    updateEventDateOnClick()
+ window.onload = function WindowLoad(event) { updateEventDateOnClick(); }
 </script>
 {% endblock main %}}

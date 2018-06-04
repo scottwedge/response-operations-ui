@@ -545,10 +545,12 @@
     });
   }
 
-  editIconSubmit();
-  removeIcon();
-  setReadyForLive();
-  cancelReadyForLive();
-  checkSample();
-  checkCI();
+  window.onload = function WindowLoad(event) {
+    editIconSubmit();
+    removeIcon();
+    setReadyForLive();
+    cancelReadyForLive();
+    checkSample();
+    checkCI();
+  }
 </script> {% endblock %}

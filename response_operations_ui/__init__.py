@@ -98,7 +98,7 @@ if app.config["SESSION_TYPE"] == "redis":
 Talisman(
     app,
     content_security_policy=CSP_POLICY,
-    content_security_policy_nonce_in=["script-src", "style-src"],
+    content_security_policy_nonce_in=["script-src"],
     session_cookie_secure=app.config["SECURE_COOKIES"],
     force_https=False,  # this is handled at the firewall
     strict_transport_security=True,

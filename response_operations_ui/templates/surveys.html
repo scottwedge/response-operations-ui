@@ -66,10 +66,14 @@
 </div>
 <script nonce="{{ csp_nonce() }}">
   function editSurveyDetails() {
-    var element = document.getElementsByClassName("edit-icon");
-    element.addEventListener("click", function () {
-      this.parentNode.submit()
-    });
-  }
+    var elementsArray = document.getElementsByClassName("edit-icon");
+    for (var i = 0; i < elementsArray.length; i++) {
+      elementsArray[i].addEventListener( "click", function() {
+        this.parentNode.submit()
+      });
+    };
+  };
+
+  window.onload = function WindowLoad(event) { editSurveyDetails(); }
 </script>
 {% endblock %}

@@ -216,9 +216,11 @@
   </div>
   {% endfor %}
   <script nonce="{{ csp_nonce() }}">
-    initDataPanels();
-    editContactDetails();
-    openPanel();
+    window.onload = function WindowLoad(event) {
+      initDataPanels();
+      editContactDetails();
+      openPanel();
+    }
   </script>
 </section>
 {% endblock %}
