@@ -22,7 +22,12 @@ body{
   min-height: 100%;
   display: grid;
   grid-template: 1fr auto;
+  position: relative;
+  height: auto;
 }
+
+
+
 
 footer{
   grid-row-start: 2;
@@ -336,6 +341,10 @@ button.hidden{
 
 table.ce-cis .tbl-ce-label{
   vertical-align: middle;
+}
+
+#ex_ref_table {
+  background-color:#edf4f0;
 }
 
 
@@ -925,4 +934,12 @@ font-weight: 400;
 
 .pagination li.next.disabled {
 	display: none;
+}
+
+.u-di {
+  display: inline;
+}
+
+.secure-message-sent-message-body .mars span {
+  white-space:pre-line;
 }
