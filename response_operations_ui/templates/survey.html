@@ -92,7 +92,7 @@
           <tbody>
             {% for exercise in collection_exercises %}
             {% if newly_created_period == exercise.exerciseRef%}
-            <tr style="background-color:#edf4f0;" class="table--row  table--row__editable">
+              <tr id="ex_ref_table" class="table--row  table--row__editable">
               {% else %}
               {% endif %}
               <td class="table--cell tbl-ce-period" name="tbl-ce-period">
