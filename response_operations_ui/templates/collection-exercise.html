@@ -299,8 +299,7 @@
                 Choose a sample file to check details before loading
               </p>
               <label class="upload-file u-vh" for="sampleFile">Choose file</label>
-              <input type="file" class="" name="sampleFile" id="sampleFile" onchange="handleFiles(this.files, {{ ci_classifiers }})"
-              accept=".csv">
+              <input type="file" class="" name="sampleFile" id="sampleFile" accept=".csv">
 
               <div id="sample-preview" class="u-mb-s"></div>
               <button id="btn-check-sample-contents" class="btn btn--primary unready" type="button" disabled="">Check sample contents</button>
@@ -505,6 +504,7 @@
     </div>
   </div>
 </div>
+<script src="{{ url_for('static', filename='js/read-csv.js') }}" nonce="{{ csp_nonce() }}"></script>
 <script nonce="{{ csp_nonce() }}">
   function editIconSubmit() {
     var elements = document.getElementsByClassName("edit-icon");
@@ -515,39 +515,48 @@
     }
   }
 
-  function removeIcon() {
-    document.getElementById("remove-icon").addEventListener('click', function () {
-      this.parentNode.submit();
-    });
-  }
-
   function setReadyForLive() {
-    document.getElementById("btn-ready-for-live").addEventListener("click", function () {
-      return "return confirm('There\'s no going back...')"
-    });
+    if (document.getElementById("btn-ready-for-live")) {
+      document.getElementById("btn-ready-for-live").addEventListener("click", function () {
+        return "return confirm('There\'s no going back...')"
+      });
+    }
   }
 
   function cancelReadyForLive() {
-    document.getElementById("btn-cancel-load-sample").addEventListener('click', function () {
-      cancelLoadSample();
-    });
+    if (document.getElementById("btn-ready-for-live")) {
+      document.getElementById("btn-ready-for-live").addEventListener('click', function () {
+        cancelLoadSample();
+      });
+    }
   }
 
   function checkSample() {
-    document.getElementById("sampleFile").addEventListener('change', function () {
-      handleFiles(this.files, "{{ ci_classifiers }}");
-    });
+    if (document.getElementById("sampleFile")) {
+      document.getElementById("sampleFile").addEventListener('change', function () {
+        handleFiles(this.files, "{{ ci_classifiers }}");
+      });
+    }
   }
 
   function checkCI() {
-    document.getElementById("ciFile").addEventListener('change', function() {
-      checkSelectedCI(this.files);
-    });
+    if (document.getElementById("ciFile")) {
+      document.getElementById("ciFile").addEventListener('change', function() {
+        checkSelectedCI(this.files);
+      });
+    }
+  }
+
+ function removeIcon() {
+    if (document.getElementById("remove-icon")) {
+      document.getElementById("remove-icon").addEventListener('click', function () {
+        this.parentNode.submit();
+      });
+    }
   }
 
   window.onload = function WindowLoad(event) {
     editIconSubmit();
-    removeIcon();
     setReadyForLive();
     cancelReadyForLive();
     checkSample();

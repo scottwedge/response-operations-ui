@@ -215,12 +215,14 @@
     </div>
   </div>
   {% endfor %}
+  <script src="{{ url_for('static', filename='js/data-panel.js') }}" nonce="{{ csp_nonce() }}"></script>
+  <script src="{{ url_for('static', filename='js/generate-enrolment.js') }}" nonce="{{ csp_nonce() }}"></script>
   <script nonce="{{ csp_nonce() }}">
     window.onload = function WindowLoad(event) {
       initDataPanels();
       editContactDetails();
       openPanel();
-    }
+    };
   </script>
 </section>
 {% endblock %}
