@@ -518,7 +518,7 @@
   function setReadyForLive() {
     if (document.getElementById("btn-ready-for-live")) {
       document.getElementById("btn-ready-for-live").addEventListener("click", function () {
-        return "return confirm('There\'s no going back...')"
+        confirm('There\'s no going back...');
       });
     }
   }
