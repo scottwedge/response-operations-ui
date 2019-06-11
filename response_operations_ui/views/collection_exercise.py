@@ -106,7 +106,6 @@ def view_collection_exercise(short_name, period):
                            sample=ce_details['sample_summary'],
                            show_set_live_button=show_set_live_button,
                            survey=ce_details['survey'],
-                           validation_failed=validation_failed,
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'])
 
 
