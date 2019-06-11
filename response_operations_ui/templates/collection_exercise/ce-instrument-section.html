@@ -64,8 +64,8 @@
       <p>
         Add {{'another' if collection_instruments else 'a'}} collection instrument. Must be XLSX
       </p>
-      <div id="ciFileErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciFile' else ''}}">
-        <div id="ciFileErrorPanelBody" class="{{'panel__body' if error.section == 'ciFile' else ''}}">
+      <div id="ciFileErrorPanel" class="{{'panel panel--simple panel--error' if get_flashed_messages('ciError') else ''}}">
+        <div id="ciFileErrorPanelBody" class="{{'panel__body' if get_flashed_messages('ciError') else ''}}">
           <p id="ciFileErrorText" class="hidden">
             Incorrect file type. Please choose a file type XLSX
           </p>

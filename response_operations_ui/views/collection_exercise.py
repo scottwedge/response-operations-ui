@@ -93,16 +93,12 @@ def view_collection_exercise(short_name, period):
     ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details['collection_instruments'], ce_details['survey'])
 
-    show_msg = request.args.get('show_msg')
-
-    success_panel = request.args.get('success_panel')
 
     return render_template('collection_exercise/collection-exercise.html',
                            breadcrumbs=breadcrumbs,
                            ce=ce_details['collection_exercise'],
                            collection_instruments=ce_details['collection_instruments'],
                            eq_ci_selectors=ce_details['eq_ci_selectors'],
-                           error=json.loads(session.get('error')) if session.get('error') else None,
                            events=ce_details['events'],
                            locked=locked,
                            missing_ci=missing_ci,
@@ -110,9 +106,7 @@ def view_collection_exercise(short_name, period):
                            sample=ce_details['sample_summary'],
                            show_set_live_button=show_set_live_button,
                            survey=ce_details['survey'],
-                           success_panel=success_panel,
                            validation_failed=validation_failed,
-                           show_msg=show_msg,
                            ci_classifiers=ce_details['ci_classifiers']['classifierTypes'])
 
 
@@ -149,25 +143,18 @@ def _set_ready_for_live(short_name, period):
         abort(404)
     try:
         collection_exercise_controllers.execute_collection_exercise(exercise['id'])
-        success_panel = "Collection exercise executed"
+        flash('Collection exercise executed', 'success')
     except ApiError:
-        session['error'] = json.dumps({
-            "section": "head",
-            "header": "Error: Failed to execute Collection Exercise",
-            "message": "Error processing collection exercise"
-        })
-        success_panel = None
+        flash('Failed to execute Collection Exercise', 'error')
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,
-                            period=period,
-                            success_panel=success_panel))
+                            period=period))
 
 
 def _upload_sample(short_name, period):
-    error = _validate_sample()
 
-    if not error:
+    if not _validate_sample():
         survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
         exercises = collection_exercise_controllers.get_collection_exercises_by_survey(survey_id)
 
@@ -188,13 +175,10 @@ def _upload_sample(short_name, period):
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,
-                            period=period,
-                            error=error,
-                            show_msg='true'))
+                            period=period,))
 
 
 def _select_collection_instrument(short_name, period):
-    success_panel = None
     cis_selected = request.form.getlist("checkbox-answer")
     cis_added = []
 
@@ -204,32 +188,23 @@ def _select_collection_instrument(short_name, period):
             cis_added.append(ci_added)
 
         if all(added for added in cis_added):
-            success_panel = "Collection instruments added"
+            flash('Collection instruments added', 'success')
         else:
-            session['error'] = json.dumps({
-                "section": "ciSelect",
-                "header": "Error: Failed to add collection instrument(s)",
-                "message": "Please try again"
-            })
+            flash('Failed to add collection instrument(s), please try again.', 'error'),
 
     else:
-        session['error'] = json.dumps({
-            "section": "ciSelect",
-            "header": "Error: No collection instruments selected",
-            "message": "Please select a collection instrument"
-        })
+        flash('No collection instruments selected, please select one.', 'error'),
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,
-                            period=period,
-                            success_panel=success_panel))
+                            period=period))
 
 
 def _upload_collection_instrument(short_name, period):
-    success_panel = None
-    error = _validate_collection_instrument()
+    if _validate_collection_instrument():
+        flash(_validate_collection_instrument(), 'ciError')
 
-    if not error:
+    else:
         file = request.files['ciFile']
         form_type = _get_form_type(file.filename)
         survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
@@ -241,85 +216,60 @@ def _upload_collection_instrument(short_name, period):
             return make_response(jsonify({'message': 'Collection exercise not found'}), 404)
 
         if collection_instrument_controllers.upload_collection_instrument(exercise['id'], file, form_type):
-            success_panel = "Collection instrument loaded"
+            flash('Collection instrument loaded', 'success')
         else:
-            session['error'] = json.dumps({
-                "section": "ciFile",
-                "header": "Error: Failed to upload collection instrument",
-                "message": "Please try again"
-            })
-    else:
-        session['error'] = json.dumps(error)
+            flash('Failed to upload collection instrument', 'ciError')
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,
-                            period=period,
-                            success_panel=success_panel))
+                            period=period,))
 
 
 def _unselect_collection_instrument(short_name, period):
-    success_panel = None
     ci_id = request.form.get('ci_id')
     ce_id = request.form.get('ce_id')
 
     ci_unlinked = collection_instrument_controllers.unlink_collection_instrument(ce_id, ci_id)
 
     if ci_unlinked:
-        success_panel = "Collection instrument removed"
+        flash('Collection instrument removed', 'success')
     else:
-        session['error'] = json.dumps({"section": "head",
-                                       "header": "Error: Failed to remove collection instrument",
-                                       "message": "Please try again"})
+        flash('Failed to remove collection instrument, please try again', 'error')
 
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             short_name=short_name,
-                            period=period,
-                            success_panel=success_panel))
+                            period=period))
 
 
 def _validate_collection_instrument():
-    error = None
     if 'ciFile' in request.files:
         file = request.files['ciFile']
         if not str.endswith(file.filename, '.xlsx'):
-            logger.debug('Invalid file format uploaded', filename=file.filename)
-            error = {
-                "section": "ciFile",
-                "header": "Error: wrong file type for collection instrument",
-                "message": "Please use XLSX file only"
-            }
+            logger.debug('Invalid file format uploaded.', filename=file.filename)
+            return 'Wrong file type, please use an XLSX file.'
         else:
             # file name format is surveyId_period_formType
             form_type = _get_form_type(file.filename) if file.filename.count('_') == 2 else ''
             if not form_type.isdigit() or len(form_type) != 4:
                 logger.debug('Invalid file format uploaded', filename=file.filename)
-                error = {
-                    "section": "ciFile",
-                    "header": "Error: invalid file name format for collection instrument",
-                    "message": "Please provide file with correct form type in file name"
-                }
+                return 'Invalid file name format, please provide a file with correct form type in file name.'
+            else:
+                return None
+
     else:
         logger.debug('No file uploaded')
-        error = {
-            "section": "ciFile",
-            "header": "Error: No collection instrument supplied",
-            "message": "Please provide a collection instrument"
-        }
-    return error
+        return 'No collection instrument supplied, please provide one.'
 
 
 def _validate_sample():
-    error = None
     if 'sampleFile' in request.files:
         file = request.files['sampleFile']
         if not str.endswith(file.filename, '.csv'):
             logger.debug('Invalid file format uploaded', filename=file.filename)
-            error = 'Invalid file format'
+            return 'Invalid file format'
     else:
         logger.debug('No file uploaded')
-        error = 'File not uploaded'
-
-    return error
+        return 'File not uploaded'
 
 
 def _format_sample_summary(sample):
@@ -372,9 +322,10 @@ def edit_collection_exercise_details(short_name, period):
         survey_id = survey_controllers.get_survey_id_by_short_name(short_name)
         locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
 
+        flash(form.errors, 'error')
         return render_template('edit-collection-exercise-details.html', survey_ref=ce_details['survey']['surveyRef'],
                                form=form, short_name=short_name, period=period, locked=locked,
-                               ce_state=ce_details['collection_exercise']['state'], errors=form.errors,
+                               ce_state=ce_details['collection_exercise']['state'],
                                user_description=ce_details['collection_exercise']['userDescription'],
                                collection_exercise_id=ce_details['collection_exercise']['id'],
                                survey_id=survey_id)
@@ -389,7 +340,8 @@ def edit_collection_exercise_details(short_name, period):
             collection_exercise_controllers.update_collection_exercise_period(form.get('collection_exercise_id'),
                                                                               form.get('period'))
 
-        return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_updated='True'))
+        flash('Collection exercise Successfully updated', 'success')
+        return redirect(url_for('surveys_bp.view_survey', short_name=short_name))
 
 
 @collection_exercise_bp.route('/<survey_ref>/<short_name>/create-collection-exercise', methods=['GET'])
@@ -415,12 +367,11 @@ def create_collection_exercise(survey_ref, short_name):
 
     if not ce_form.validate():
         logger.info("Failed validation, retrieving survey data for form", survey=short_name, survey_ref=survey_ref)
-        error = None
 
         if ce_form.errors['period'][1] == 'Please enter numbers only for the period':
-            error = ce_form.errors['period'][1]
+            flash('Please enter numbers only gor the period', 'error')
 
-        return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name, errors=error,
+        return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name,
                                survey_ref=survey_ref, survey_id=survey_id,
                                survey_name=survey_name)
 
@@ -429,9 +380,8 @@ def create_collection_exercise(survey_ref, short_name):
 
     for ce in ce_details:
         if ce['exerciseRef'] == str(created_period):
-            error = "Please use a period that is not in use by any collection exercise for this survey."
+            flash('Please use a period that is not in use by any collection exercise for this survey.', 'error')
             return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name,
-                                   errors=error,
                                    survey_ref=survey_ref, survey_id=survey_id,
                                    survey_name=survey_name)
 
@@ -443,7 +393,8 @@ def create_collection_exercise(survey_ref, short_name):
                                                                form.get('period'))
 
     logger.info("Successfully created collection exercise", survey=short_name, survey_ref=survey_ref)
-    return redirect(url_for('surveys_bp.view_survey', short_name=short_name, ce_created='True',
+    flash('Successfully created collection exercise', 'success')
+    return redirect(url_for('surveys_bp.view_survey', short_name=short_name,
                             new_period=form.get('period')))
 
 
