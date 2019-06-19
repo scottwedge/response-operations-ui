@@ -47,8 +47,7 @@ def sign_in():
                 return redirect(session['next'])
             return redirect(url_for('home_bp.home'))
 
-    for message in get_flashed_messages(with_categories=True):
-        if "failed_authentication" in message:
-            return render_template('sign_in.html', form=form, failed_authentication=True)
+    if get_flashed_messages(with_categories='failed_authentication'):
+        return render_template('sign_in.html', form=form, failed_authentication=True)
 
     return render_template('sign_in.html', form=form)

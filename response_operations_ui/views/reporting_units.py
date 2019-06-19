@@ -70,7 +70,7 @@ def view_reporting_unit(ru_ref):
         collection_exercise = next(filter(lambda s: s['exerciseRef'] == period_arg, survey['collection_exercises']))
         new_status = collection_exercise['responseStatus']
         flash(f'Response status for {survey["surveyRef"]} {survey["shortName"]}'
-              f' period {period_arg} changed to {new_status}')
+              f' period {period_arg} changed to {new_status}', 'success')
 
     info = request.args.get('info')
     if request.args.get('enrolment_changed'):
