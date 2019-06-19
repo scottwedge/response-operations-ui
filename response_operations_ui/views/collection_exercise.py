@@ -93,7 +93,6 @@ def view_collection_exercise(short_name, period):
     ce_details['collection_exercise']['state'] = map_collection_exercise_state(ce_state)  # NOQA
     _format_ci_file_name(ce_details['collection_instruments'], ce_details['survey'])
 
-
     return render_template('collection_exercise/collection-exercise.html',
                            breadcrumbs=breadcrumbs,
                            ce=ce_details['collection_exercise'],
@@ -480,10 +479,10 @@ def create_collection_exercise_event(short_name, period, ce_id, tag):
             ce_id=ce_id,
             tag=tag)
 
+    flash('Event date added.', 'success')
     return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                             period=period,
-                            short_name=short_name,
-                            success_panel='Event date added.'))
+                            short_name=short_name))
 
 
 def get_event_name(tag):
@@ -525,20 +524,16 @@ def remove_loaded_sample(short_name, period):
                     short_name=short_name,
                     period=period,
                     collection_exercise_id=collection_exercise_id)
+        flash('Sample removed.', 'success')
         return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                                 short_name=short_name,
-                                period=period,
-                                success_panel="Sample removed"))
+                                period=period))
     else:
         logger.info("Failed to remove sample for collection exercise",
                     short_name=short_name,
                     period=period,
                     collection_exercise_id=collection_exercise_id)
-        session['error'] = json.dumps({
-            "section": "head",
-            "header": "Error: Failed to remove sample",
-            "message": "Please try again"
-        })
+        flash('Failed to remove sample, please try again', 'error')
         return redirect(url_for('collection_exercise_bp.view_collection_exercise',
                                 short_name=short_name,
                                 period=period))
