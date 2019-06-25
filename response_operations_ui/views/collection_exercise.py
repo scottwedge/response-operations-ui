@@ -85,7 +85,8 @@ def view_collection_exercise(short_name, period):
     show_set_live_button = ce_state in ('READY_FOR_REVIEW', 'FAILEDVALIDATION')
     locked = ce_state in ('LIVE', 'READY_FOR_LIVE', 'EXECUTION_STARTED', 'VALIDATED', 'EXECUTED')
     processing = ce_state in ('EXECUTION_STARTED', 'EXECUTED', 'VALIDATED')
-    validation_failed = ce_state == 'FAILEDVALIDATION'
+    if ce_state == 'FAILEDVALIDATION':
+        flash('failed_validation', 'An error occured while validating the collection excercise, please try again.')
     validation_errors = ce_details['collection_exercise']['validationErrors']
     missing_ci = validation_errors and any('MISSING_COLLECTION_INSTRUMENT' in unit['errors']
                                            for unit in validation_errors)
