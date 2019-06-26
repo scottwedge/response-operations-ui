@@ -12,13 +12,13 @@
     {% endcall %}
 {% endif %}
 
-{# Display header message if section header #}
-{% if error['section'] == 'head' %}
-    {% call panel(id='validation-error', type='error', header=error['header'], class='u-mb-s') %} {{ error['message'] }} {% endcall %}
+{# Display error if generic 'error' flash category passed #}
+{% if get_flashed_message('error') %}
+    {% call panel(id='validation-error', type='error', header='An error has occurred', class='u-mb-s') %} {{ get_flashed_message('error') }} {% endcall %}
 {% endif %}
 
 {# Show state message panels #}
-{% if sample and show_msg == 'true' %}
+{% if sample == 'true' and get_flashed_messages() %}
     {% if sample.state == 'INIT' %}
     {% call panel(class='u-mb-l') %}Loading sample&hellip; <span class="u-ml-xs"><a href="/surveys/{{survey.shortName}}/{{ce.exerciseRef}}?show_msg=true">Refresh to see progress</a></span>{% endcall %}
     {% elif sample.state == 'ACTIVE' %}
