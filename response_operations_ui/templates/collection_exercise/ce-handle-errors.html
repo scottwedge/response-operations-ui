@@ -13,8 +13,8 @@
 {% endif %}
 
 {# Display error if generic 'error' flash category passed #}
-{% if get_flashed_message('error') %}
-    {% call panel(id='validation-error', type='error', header='An error has occurred', class='u-mb-s') %} {{ get_flashed_message('error') }} {% endcall %}
+{% if get_flashed_messages('error') %}
+    {% call panel(id='validation-error', type='error', header='An error has occurred', class='u-mb-s') %} {{ get_flashed_messages('error') }} {% endcall %}
 {% endif %}
 
 {# Show state message panels #}

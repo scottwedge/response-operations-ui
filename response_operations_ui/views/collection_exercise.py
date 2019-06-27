@@ -1,10 +1,9 @@
-import json
 import logging
 from datetime import datetime
 
 import iso8601
 from dateutil import tz
-from flask import Blueprint, abort, render_template, request, redirect, session, url_for
+from flask import Blueprint, abort, render_template, request, redirect, url_for
 from flask import jsonify, make_response, flash
 from flask_login import login_required
 from structlog import wrap_logger
