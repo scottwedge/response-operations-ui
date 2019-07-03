@@ -338,8 +338,7 @@ def edit_collection_exercise_details(short_name, period):
             collection_exercise_controllers.update_collection_exercise_period(form.get('collection_exercise_id'),
                                                                               form.get('period'))
 
-        flash('Collection exercise Successfully updated', 'success')
-        return redirect(url_for('surveys_bp.view_survey', short_name=short_name))
+        return redirect(url_for('surveys_bp.view_survey', short_name=short_name, message_key='ce_updated'))
 
 
 @collection_exercise_bp.route('/<survey_ref>/<short_name>/create-collection-exercise', methods=['GET'])
@@ -391,9 +390,8 @@ def create_collection_exercise(survey_ref, short_name):
                                                                form.get('period'))
 
     logger.info("Successfully created collection exercise", survey=short_name, survey_ref=survey_ref)
-    flash('Successfully created collection exercise', 'success')
     return redirect(url_for('surveys_bp.view_survey', short_name=short_name,
-                            new_period=form.get('period')))
+                            new_period=form.get('period'), message_key='ce_created'))
 
 
 @collection_exercise_bp.route('/<short_name>/<period>/<ce_id>/confirm-create-event/<tag>', methods=['GET'])

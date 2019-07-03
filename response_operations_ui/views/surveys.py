@@ -21,7 +21,9 @@ surveys_bp = Blueprint('surveys_bp', __name__,
 def get_info_message(message_key):
     return {
         'survey_changed': "Survey details changed",
-        'survey_created': "Survey created successfully"
+        'survey_created': "Survey created successfully",
+        'ce_created': "Collection exercise created",
+        'ce_updated': "Collection exercise details updated"
     }[message_key]
 
 
@@ -57,11 +59,10 @@ def view_survey(short_name):
     collection_exercises = collection_exercise_controllers.\
         get_collection_exercises_with_events_and_samples_by_survey_id(survey['id'])
 
-    if request.args.get('ce_updated'):
-        flash('Collection exercise details updated', 'success')
+    message_key = request.args.get('message_key')
 
-    if request.args.get('ce_created'):
-        flash('Collection exercise created', 'success')
+    if request.args.get(message_key):
+        flash(get_info_message(message_key), 'success')
 
     newly_created_period = request.args.get('new_period')
 
