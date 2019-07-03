@@ -3,10 +3,10 @@
 
 {% block main %}
 <div role="main" id="main" class="page__main">
-{% if info_message %}
+{% if get_flashed_messages('success') %}
   <div class="panel panel--simple panel--success">
     <div id="collection-instrument-success" class="panel__body">
-      {{ info_message }}
+      {{ get_flashed_messages('success') }}
     </div>
   </div>
 {% endif %}

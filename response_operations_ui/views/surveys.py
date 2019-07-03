@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from structlog import wrap_logger
 
@@ -34,12 +34,9 @@ def view_surveys():
     message_key = request.args.get('message_key')
 
     if message_key:
-        info_message = get_info_message(message_key)
-    else:
-        info_message = None
+        flash(get_info_message(message_key), 'success')
 
-    return render_template('surveys.html', info_message=info_message,
-                           survey_list=survey_list, breadcrumbs=breadcrumbs)
+    return render_template('surveys.html', survey_list=survey_list, breadcrumbs=breadcrumbs)
 
 
 @surveys_bp.route('/<short_name>', methods=['GET'])
@@ -60,13 +57,11 @@ def view_survey(short_name):
     collection_exercises = collection_exercise_controllers.\
         get_collection_exercises_with_events_and_samples_by_survey_id(survey['id'])
 
-    updated_ce_message = None
     if request.args.get('ce_updated'):
-        updated_ce_message = 'Collection exercise details updated'
+        flash('Collection exercise details updated', 'success')
 
-    created_ce_message = None
     if request.args.get('ce_created'):
-        created_ce_message = 'Collection exercise created'
+        flash('Collection exercise created', 'success')
 
     newly_created_period = request.args.get('new_period')
 
@@ -80,8 +75,7 @@ def view_survey(short_name):
     return render_template('survey.html',
                            survey=survey,
                            collection_exercises=collection_exercises,
-                           breadcrumbs=breadcrumbs, updated_ce_message=updated_ce_message,
-                           created_ce_message=created_ce_message, newly_created_period=newly_created_period)
+                           breadcrumbs=breadcrumbs, newly_created_period=newly_created_period)
 
 
 @surveys_bp.route('/edit-survey-details/<short_name>', methods=['GET'])
@@ -113,6 +107,8 @@ def edit_survey_details(short_name):
         survey_controllers.update_survey_details(form.get('hidden_survey_ref'),
                                                  form.get('short_name'),
                                                  form.get('long_name'))
+
+        flash('Survey details changed', 'success')
         return redirect(url_for('surveys_bp.view_surveys', short_name=short_name, message_key='survey_changed'))
 
 
@@ -142,6 +138,7 @@ def create_survey():
                                              request.form.get('long_name'),
                                              request.form.get('legal_basis'))
 
+            flash('Survey created successfully', 'success')
             return redirect(url_for('surveys_bp.view_surveys', short_name=request.form.get('short_name'),
                                     message_key='survey_created'))
         except ApiError as err:
