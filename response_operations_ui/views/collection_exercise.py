@@ -366,7 +366,7 @@ def create_collection_exercise(survey_ref, short_name):
         logger.info("Failed validation, retrieving survey data for form", survey=short_name, survey_ref=survey_ref)
 
         if ce_form.errors['period'][1] == 'Please enter numbers only for the period':
-            flash('Please enter numbers only gor the period', 'error')
+            flash('Please enter numbers only for the period', 'error')
 
         return render_template('create-collection-exercise.html', form=ce_form, short_name=short_name,
                                survey_ref=survey_ref, survey_id=survey_id,

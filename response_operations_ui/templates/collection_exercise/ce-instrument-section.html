@@ -43,8 +43,8 @@
           <div class="u-mb-s">
             eQ collection instruments available:
           </div>
-      <div id="ciSelectErrorPanel" class="{{'panel panel--simple panel--error' if error.section == 'ciSelect' else ''}}">
-        <div id="ciSelectErrorPanelBody" class="{{'panel__body' if error.section == 'ciSelect' else ''}}">
+      <div id="ciSelectErrorPanel" class="{{'panel panel--simple panel--error' if get_flashed_messages('ciSelect') else ''}}">
+        <div id="ciSelectErrorPanelBody" class="{{'panel__body' if get_flashed_messages('ciSelect') else ''}}">
           <input type="hidden" name="ce_id" value="{{ ce.id }}">
           {% for ci in eq_ci_selectors %}
           <div class="field__item js-focusable-box">
