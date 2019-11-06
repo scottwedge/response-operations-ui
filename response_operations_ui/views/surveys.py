@@ -89,8 +89,17 @@ def view_survey(short_name):
 def view_survey_details(short_name):
     survey_details = survey_controllers.get_survey(short_name)
     form = EditSurveyDetailsForm(form=request.form)
+    breadcrumbs = [
+        {
+            "text": "Surveys",
+            "url": "/surveys"
+        },
+        {
+            "text": f"{survey_details['surveyRef']} {survey_details['shortName']}",
+        }
+    ]
 
-    return render_template('edit-survey-details.html', form=form, short_name=short_name,
+    return render_template('edit-survey-details.html', breadcrumbs=breadcrumbs, form=form,  short_name=short_name,
                            legal_basis=survey_details['legalBasis'],
                            long_name=survey_details['longName'],
                            survey_ref=survey_details['surveyRef'])

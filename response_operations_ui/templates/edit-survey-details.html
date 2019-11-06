@@ -1,69 +1,68 @@
-{% extends "layouts/spoke.html" %}
-{% block page_title %} Edit survey details {% endblock %}
+{% extends "layouts/base.html" %}
+{% from "components/button/_macro.njk" import onsButton %}
+
+{% set page_title = "Edit survey details" %}
+
 {% block main %}
-<div role="main" id="main" class="page__main">
-  <div class="spoke__header">
-    <div class="spoke__header-title">
-      <h1 class="u-fs-xl">Edit survey details</h1>
+  <form action="" method="post">
+    {{ form.csrf_token }}
+    <div class="field u-mb-l">
+      <label class="label" for="survey_id">
+        Survey ID:
+        <span class="u-vh">Current value: </span>
+        <span class="u-fs-r">
+            {{ survey_ref }}
+            </span>
+      </label>
+      <label class="label" for="legal_basis">
+        Legal Basis:
+        <span class="u-vh">Current value: </span>
+        <span class="u-fs-r">
+            {{ legal_basis }}
+            </span>
+      </label>
     </div>
-  </div>
-  <div class="spoke__body">
-    <form action="" method="post">
-      {{ form.csrf_token }}
+    {% if errors %}
+    <div class="panel panel--simple panel--error u-mb-l">
+      <div class="panel__body" id="save-error">
+        <h2 id='error-saving-message' class="u-fs-r--b">Error updating survey details</h2>
+        <p class="u-fs-r">Please remove any spaces in the short name and try saving your changes again</p>
+      </div>
+    </div>
+    {% endif %}
+      <div class="field u-mb-s">
+        <label class="label" for="short_name">
+          Short Name
+          <span class="secondary-info current-value">
+          <span class="u-vh">Current value: </span>
+              {{ short_name }}
+          </span>
+        </label>
+        {{ form.short_name(class_="input input--text", id='short_name', required=required, maxlength=254, value=short_name) }}
+      </div>
       <div class="field u-mb-l">
-        <label class="label" for="survey_id">
-          Survey ID:
+        <label class="label" for="long_name">
+          Long Name
+          <span class="secondary-info current-value">
           <span class="u-vh">Current value: </span>
-          <span class="u-fs-r">
-              {{ survey_ref }}
-              </span>
+              {{ long_name }}
+          </span>
         </label>
-        <label class="label" for="legal_basis">
-          Legal Basis:
-          <span class="u-vh">Current value: </span>
-          <span class="u-fs-r">
-              {{ legal_basis }}
-              </span>
-        </label>
-      </div>
-      {% if errors %}
-      <div class="panel panel--simple panel--error u-mb-l">
-        <div class="panel__body" id="save-error">
-          <h2 id='error-saving-message' class="u-fs-r--b">Error updating survey details</h2>
-          <p class="u-fs-r">Please remove any spaces in the short name and try saving your changes again</p>
-        </div>
-      </div>
-      {% endif %}
-        <div class="field u-mb-s">
-          <label class="label" for="short_name">
-            Short Name
-            <span class="secondary-info current-value">
-            <span class="u-vh">Current value: </span>
-                {{ short_name }}
-            </span>
-          </label>
-          {{ form.short_name(class_="input input--text", id='short_name', required=required, maxlength=254, value=short_name) }}
-        </div>
+        {{ form.long_name(class_="input input--text", id='long_name', required=required, maxlength=254, value=long_name) }}
         <div class="field u-mb-l">
-          <label class="label" for="long_name">
-            Long Name
-            <span class="secondary-info current-value">
-            <span class="u-vh">Current value: </span>
-                {{ long_name }}
-            </span>
-          </label>
-          {{ form.long_name(class_="input input--text", id='long_name', required=required, maxlength=254, value=long_name) }}
-          <div class="field u-mb-l">
-            <span class="u-vh">Current value: </span>
-            </span>
-            {{ form.hidden_survey_ref(value=survey_ref, id='survey_ref') }}
-          </div>
+          <span class="u-vh">Current value: </span>
+          </span>
+          {{ form.hidden_survey_ref(value=survey_ref, id='survey_ref') }}
         </div>
-      <button class="btn u-mb-s" id="save-btn">Save</button>
-      <div>
+      </div>
+      {{
+        onsButton({
+            "text": "Save",
+            "id": "save-btn"
+        })
+      }}
+      <div class="u-mt-s">  
         <a id="cancel-btn" href="{{ url_for('surveys_bp.view_surveys') }}">Cancel</a>
       </div>
-    </form>
-  </div>
-</div>
+  </form>
 {% endblock %}
