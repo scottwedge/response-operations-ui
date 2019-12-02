@@ -94,6 +94,8 @@ class Config(object):
 
 
 class DevelopmentConfig(Config):
+
+    WTF_CSRF_TIME_LIMIT = 1
     DEBUG = os.getenv('DEBUG', True)
     LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'DEBUG')
     REDIS_HOST = os.getenv('REDIS_HOST', "localhost")

@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timezone
 
 from flask import current_app as app
-from flask import Blueprint, flash, render_template, request, redirect, url_for
+from flask import Blueprint, flash, render_template, request, redirect, session, url_for
 from flask_login import login_required
 from flask_paginate import Pagination
 from iso8601 import parse_date
@@ -183,10 +183,12 @@ def search_reporting_unit_home():
 @login_required
 def search_redirect():
     form = RuSearchForm(request.form)
+    query = request.form.get('query')
 
     if form.validate_on_submit():
-        query = request.form.get('query')
+        return redirect(url_for('reporting_unit_bp.search_reporting_units', query=query))
 
+    if form.errors.get("csrf_token"):
         return redirect(url_for('reporting_unit_bp.search_reporting_units', query=query))
 
 

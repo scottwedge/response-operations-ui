@@ -21,6 +21,7 @@ sign_in_bp = Blueprint('sign_in_bp', __name__, static_folder='static', template_
 def sign_in():
     form = LoginForm(request.form)
     if current_user.is_authenticated:
+        logger.info("in here")
         return redirect(url_for('home_bp.home'))
 
     if form.validate_on_submit():

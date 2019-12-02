@@ -2,6 +2,7 @@ import logging
 
 from flask import Blueprint, flash, redirect, render_template, url_for, request
 from structlog import wrap_logger
+from flask_wtf.csrf import CSRFError
 
 from response_operations_ui.exceptions.exceptions import ApiError, UpdateContactDetailsException
 
@@ -31,6 +32,11 @@ def update_details_exception(error=None):
                            form=error.form,
                            error_type=error_type,
                            respondent_details=error.respondent_details)
+
+
+@error_bp.app_errorhandler(CSRFError)
+def handle_authentication_error(error):
+    logger.error("CSRF bad times", exc_info=True)
 
 
 @error_bp.app_errorhandler(401)
